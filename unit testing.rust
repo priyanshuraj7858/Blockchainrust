@@ -1,0 +1,24 @@
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ic_cdk::export::candid::Principal;
+
+    #[test]
+    fn test_transfer_tokens() {
+        let contract_principal = Principal::from_text("your_contract_principal_here").unwrap();
+        let recipient = Principal::from_text("recipient_principal_here").unwrap();
+        let initial_balance = check_balance(contract_principal.clone());
+
+        transfer_tokens(contract_principal.clone(), recipient.clone(), 100);
+        
+        let new_balance = check_balance(contract_principal.clone());
+        assert_eq!(new_balance, initial_balance - 100);
+    }
+
+    #[test]
+    fn test_balance_of() {
+        let contract_principal = Principal::from_text("your_contract_principal_here").unwrap();
+        let balance = check_balance(contract_principal.clone());
+        println!("Current balance: {}", balance);
+    }
+}
