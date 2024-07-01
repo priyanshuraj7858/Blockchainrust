@@ -1,0 +1,96 @@
+use std::collections::HashMap;
+
+
+struct Task {
+    title: String,
+    description: String,
+    start_date: String,  // In a real project, use proper date/time types
+    end_date: String,
+}
+
+
+enum TaskStatus {
+    NotStarted,
+    InProgress,
+    Completed,
+}
+
+
+struct Timeline {
+    tasks: HashMap<String, Task>,
+}
+
+impl Timeline {
+    
+    fn add_task(&mut self, title: String, description: String, start_date: String, end_date: String) {
+        let task = Task {
+            title: title.clone(),
+            description,
+            start_date,
+            end_date,
+        };
+        self.tasks.insert(title, task);
+    }
+
+    
+    fn update_task_status(&mut self, title: &str, status: TaskStatus) {
+        if let Some(task) = self.tasks.get_mut(title) {
+            
+            match status {
+                TaskStatus::NotStarted => {
+                   
+                }
+                TaskStatus::InProgress => {
+                    
+                }
+                TaskStatus::Completed => {
+                    
+                }
+            }
+        } else {
+            println!("Task '{}' not found.", title);
+        }
+    }
+
+    
+    fn display_timeline(&self) {
+        println!("Timeline Tasks:");
+        for (title, task) in &self.tasks {
+            println!("Title: {}", title);
+            println!("Description: {}", task.description);
+            println!("Start Date: {}", task.start_date);
+            println!("End Date: {}", task.end_date);
+            println!();
+        }
+    }
+}
+
+fn main() {
+    
+    let mut timeline = Timeline { tasks: HashMap::new() };
+
+    
+    timeline.add_task(
+        "Task 1".to_string(),
+        "Implement Rust code".to_string(),
+        "2024-07-01".to_string(),
+        "2024-07-05".to_string(),
+    );
+
+    timeline.add_task(
+        "Task 2".to_string(),
+        "Write documentation".to_string(),
+        "2024-07-03".to_string(),
+        "2024-07-07".to_string(),
+    );
+
+    
+    timeline.display_timeline();
+
+    
+    timeline.update_task_status("Task 1", TaskStatus::InProgress);
+
+    
+    println!("Timeline after updating task status:");
+    timeline.display_timeline();
+}
