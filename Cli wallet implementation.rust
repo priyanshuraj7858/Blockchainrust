@@ -1,0 +1,28 @@
+
+
+use ic_cdk::export::candid::Principal;
+
+
+fn main() {
+    let contract_principal = Principal::from_text("your_contract_principal_here").unwrap();
+    let amount = 100;
+
+    
+    transfer_tokens(contract_principal.clone(), Principal::from_text("receiver_principal_here").unwrap(), amount);
+
+    
+    let balance = check_balance(contract_principal.clone());
+    println!("Current balance: {}", balance);
+}
+
+fn transfer_tokens(contract_principal: Principal, recipient: Principal, amount: u64) {
+    
+    let result = ic_cdk::call::call::<(Principal, u64), ()>(contract_principal, "transfer", (recipient, amount)).unwrap();
+    println!("Transfer result: {:?}", result);
+}
+
+fn check_balance(contract_principal: Principal) -> u64 {
+   
+    let balance: u64 = ic_cdk::call::call::<Principal, u64>(contract_principal, "balance_of", ()).unwrap();
+    balance
+}
