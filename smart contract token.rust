@@ -1,0 +1,33 @@
+
+use ic_cdk_macros::*;
+use ic_cdk::storage;
+use ic_cdk::export::candid::{CandidType, Principal};
+
+
+#[derive(Clone, Debug, Default, CandidType)]
+struct TokenContract {
+    balances: storage::HashMap<Principal, u64>,
+}
+
+#[init]
+fn init() -> TokenContract {
+    TokenContract {
+        balances: storage::HashMap::new(),
+    }
+}
+
+#[update]
+fn transfer(to: Principal, amount: u64) {
+    let sender = ic_cdk::caller();
+    let sender_balance = self.balances.get(&sender).unwrap_or(0);
+    assert!(sender_balance >= amount, "Insufficient balance");
+
+    let receiver_balance = self.balances.get(&to).unwrap_or(0);
+    self.balances.insert(sender, sender_balance - amount);
+    self.balances.insert(to, receiver_balance + amount);
+}
+
+#[query]
+fn balance_of(owner: Principal) -> u64 {
+    *self.balances.get(&owner).unwrap_or(&0)
+}
