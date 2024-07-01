@@ -1,0 +1,70 @@
+use ic_cdk::export::candid::Principal;
+use std::io::{self, Write};
+
+fn main() {
+    
+    let contract_principal = Principal::from_text("your_contract_principal_here").unwrap();
+    
+    loop {
+        println!("Choose an option:");
+        println!("1. Send tokens");
+        println!("2. Receive tokens");
+        println!("3. Check balance");
+        println!("4. Exit");
+
+        let mut choice = String::new();
+        io::stdin().read_line(&mut choice).expect("Failed to read line");
+        let choice: u32 = match choice.trim().parse() {
+            Ok(num) => num,
+            Err(_) => {
+                println!("Invalid input. Please enter a number.");
+                continue;
+            }
+        };
+
+        match choice {
+            1 => send_tokens(&contract_principal),
+            2 => receive_tokens(&contract_principal),
+            3 => check_balance(&contract_principal),
+            4 => {
+                println!("Exiting...");
+                break;
+            }
+            _ => println!("Invalid choice. Please enter a number from 1 to 4."),
+        }
+    }
+}
+
+fn send_tokens(contract_principal: &Principal) {
+    println!("Enter recipient's principal:");
+    let mut recipient_input = String::new();
+    io::stdin().read_line(&mut recipient_input).expect("Failed to read line");
+    let recipient = Principal::from_text(recipient_input.trim()).expect("Invalid principal format");
+
+    println!("Enter amount:");
+    let mut amount_input = String::new();
+    io::stdin().read_line(&mut amount_input).expect("Failed to read line");
+    let amount: u64 = match amount_input.trim().parse() {
+        Ok(num) => num,
+        Err(_) => {
+            println!("Invalid amount. Please enter a number.");
+            return;
+        }
+    };
+
+   
+    let result = ic_cdk::call::call::<(Principal, u64), ()>(*contract_principal, "transfer", (recipient, amount)).unwrap();
+    println!("Transfer successful: {:?}", result);
+}
+
+fn receive_tokens(contract_principal: &Principal) {
+    println!("Receive tokens functionality not implemented in this demo.");
+    
+}
+
+fn check_balance(contract_principal: &Principal) {
+    println!("Checking balance...");
+    
+    let balance: u64 = ic_cdk::call::call::<Principal, u64>(*contract_principal, "balance_of", ()).unwrap();
+    println!("Current balance: {}", balance);
+}
